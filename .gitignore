@@ -1,0 +1,13 @@
+node_modules
+program/node_modules
+node_modules/
+**/node_modules/
+program/target/
+program/test-ledger/
+# Never commit program keypairs / secrets — held out of band (upgrade authority).
+**/*-keypair.json
+**/deploy/*.json
+.env
+.env.*
+*.log
+.DS_Store

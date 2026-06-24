@@ -1,0 +1,927 @@
+{
+  "address": "6efiRKPtXWCdDTTgH2Qog6BGqbcSBgoLra33UXkGQ3AR",
+  "metadata": {
+    "name": "arena",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Gamerplex Arena — shared on-chain lobby + Ephemeral-Rollup match contract"
+  },
+  "instructions": [
+    {
+      "name": "commit_match",
+      "docs": [
+        "Commit + undelegate the match back to L1. NO field writes here (the result",
+        "was set by finish_match); the resolver replay-validates the action log,",
+        "then score/ELO commits via the arcade contract."
+      ],
+      "discriminator": [
+        175,
+        146,
+        74,
+        234,
+        39,
+        25,
+        248,
+        114
+      ],
+      "accounts": [
+        {
+          "name": "match_account",
+          "docs": [
+            "on exit — commit_and_undelegate marks it undelegating; a typed exit-write",
+            "would fail with ExternalAccountDataModified."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_game_id",
+          "type": "u64"
+        },
+        {
+          "name": "_match_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_match",
+      "docs": [
+        "Create a match for game_id between players (L1). Off-chain matchmaking",
+        "(resolver) pairs players and calls this."
+      ],
+      "discriminator": [
+        107,
+        2,
+        184,
+        145,
+        70,
+        142,
+        17,
+        165
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  114,
+                  101,
+                  110,
+                  97,
+                  95,
+                  103,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "registry"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "match_id",
+          "type": "u64"
+        },
+        {
+          "name": "players",
+          "type": {
+            "vec": "pubkey"
+          }
+        },
+        {
+          "name": "turn_based",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "delegate_match",
+      "docs": [
+        "Delegate the match account to the Ephemeral Rollup for low-latency play."
+      ],
+      "discriminator": [
+        30,
+        116,
+        9,
+        69,
+        147,
+        61,
+        133,
+        238
+      ],
+      "accounts": [
+        {
+          "name": "buffer_match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                83,
+                240,
+                178,
+                226,
+                125,
+                49,
+                75,
+                221,
+                17,
+                3,
+                255,
+                158,
+                114,
+                228,
+                53,
+                13,
+                209,
+                155,
+                197,
+                2,
+                19,
+                120,
+                45,
+                92,
+                111,
+                130,
+                109,
+                0,
+                227,
+                148,
+                228,
+                210
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "match_account",
+          "docs": [
+            "so anchor does NOT re-serialize on exit — the `del` CPI reassigns it to the",
+            "delegation program mid-ix, and a typed-account exit-write would fail with",
+            "\"modified data of an account it does not own\". A-4: seeds still validate the",
+            "PDA (safe on UncheckedAccount — no exit write)."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "owner_program",
+          "address": "6efiRKPtXWCdDTTgH2Qog6BGqbcSBgoLra33UXkGQ3AR"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "match_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "finish_match",
+      "docs": [
+        "Report the result (ER write, by the match creator/server). Separate from",
+        "the commit so the commit ix performs NO account write — anchor's exit must",
+        "not re-serialize a committing/undelegating account."
+      ],
+      "discriminator": [
+        65,
+        193,
+        5,
+        71,
+        16,
+        64,
+        11,
+        186
+      ],
+      "accounts": [
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "match_account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "_game_id",
+          "type": "u64"
+        },
+        {
+          "name": "_match_id",
+          "type": "u64"
+        },
+        {
+          "name": "winner",
+          "type": {
+            "option": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "init_registry",
+      "docs": [
+        "One-time: create the global registry (admin owns game-id allocation)."
+      ],
+      "discriminator": [
+        131,
+        22,
+        4,
+        103,
+        24,
+        94,
+        163,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "process_undelegation",
+      "discriminator": [
+        196,
+        28,
+        41,
+        206,
+        48,
+        37,
+        51,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "base_account",
+          "writable": true
+        },
+        {
+          "name": "buffer"
+        },
+        {
+          "name": "payer",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "account_seeds",
+          "type": {
+            "vec": "bytes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "register_game",
+      "docs": [
+        "Register a game → allocate the next game_id. Admin-gated (decentralize later)."
+      ],
+      "discriminator": [
+        122,
+        44,
+        95,
+        58,
+        89,
+        33,
+        40,
+        59
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  114,
+                  101,
+                  110,
+                  97,
+                  95,
+                  103,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "registry.next_game_id",
+                "account": "Registry"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "registry"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "slug",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submit_action",
+      "docs": [
+        "Submit an OPAQUE action (runs on the ER). Turn-order + membership enforced;",
+        "game rules are NOT validated on-chain — the resolver replay-validates."
+      ],
+      "discriminator": [
+        222,
+        59,
+        32,
+        151,
+        194,
+        137,
+        175,
+        150
+      ],
+      "accounts": [
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "_game_id",
+          "type": "u64"
+        },
+        {
+          "name": "_match_id",
+          "type": "u64"
+        },
+        {
+          "name": "action",
+          "type": "bytes"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ArenaGame",
+      "discriminator": [
+        209,
+        67,
+        109,
+        24,
+        212,
+        37,
+        139,
+        135
+      ]
+    },
+    {
+      "name": "Match",
+      "discriminator": [
+        236,
+        63,
+        169,
+        38,
+        15,
+        56,
+        196,
+        162
+      ]
+    },
+    {
+      "name": "Registry",
+      "discriminator": [
+        47,
+        174,
+        110,
+        246,
+        184,
+        182,
+        252,
+        218
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AdminOnly",
+      "msg": "Only the registry admin may do this."
+    },
+    {
+      "code": 6001,
+      "name": "SlugTooLong",
+      "msg": "Slug too long."
+    },
+    {
+      "code": 6002,
+      "name": "BadPlayerCount",
+      "msg": "A match needs 2..=4 players."
+    },
+    {
+      "code": 6003,
+      "name": "ActionTooLong",
+      "msg": "Action exceeds the max length."
+    },
+    {
+      "code": 6004,
+      "name": "MatchNotActive",
+      "msg": "Match is not active."
+    },
+    {
+      "code": 6005,
+      "name": "NotAPlayer",
+      "msg": "Signer is not a player in this match."
+    },
+    {
+      "code": 6006,
+      "name": "NotYourTurn",
+      "msg": "Not your turn."
+    },
+    {
+      "code": 6007,
+      "name": "NotCreator",
+      "msg": "Only the match creator may finish it."
+    },
+    {
+      "code": 6008,
+      "name": "DuplicatePlayer",
+      "msg": "Duplicate player in the match."
+    },
+    {
+      "code": 6009,
+      "name": "WinnerNotAPlayer",
+      "msg": "Winner must be one of the players."
+    },
+    {
+      "code": 6010,
+      "name": "MatchNotFinished",
+      "msg": "Match is not finished."
+    },
+    {
+      "code": 6011,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow."
+    }
+  ],
+  "types": [
+    {
+      "name": "ArenaGame",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "game_id",
+            "type": "u64"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "matches_created",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Match",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "game_id",
+            "type": "u64"
+          },
+          {
+            "name": "match_id",
+            "type": "u64"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "players",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "turn_based",
+            "type": "bool"
+          },
+          {
+            "name": "current_turn",
+            "type": "u8"
+          },
+          {
+            "name": "action_count",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": "u8"
+          },
+          {
+            "name": "has_winner",
+            "type": "bool"
+          },
+          {
+            "name": "winner",
+            "type": "pubkey"
+          },
+          {
+            "name": "last_action",
+            "type": "bytes"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Registry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "next_game_id",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

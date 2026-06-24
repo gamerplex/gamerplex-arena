@@ -1,0 +1,19 @@
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+arena = "6efiRKPtXWCdDTTgH2Qog6BGqbcSBgoLra33UXkGQ3AR"
+
+[programs.devnet]
+arena = "6efiRKPtXWCdDTTgH2Qog6BGqbcSBgoLra33UXkGQ3AR"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "echo 'no tests yet'"

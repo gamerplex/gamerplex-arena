@@ -1,0 +1,29 @@
+{
+  "name": "@gamerplex/realtime",
+  "version": "0.1.0",
+  "description": "Live on-chain (Tier 3) gameplay for Gamerplex games — MagicBlock Ephemeral Rollup helpers. Sovereign player-signed first; server session-pool as an opt-in module. Modeled on Pet Legends Arena; adopted by Magic Chess.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./session-pool": "./dist/session-pool.js"
+  },
+  "files": ["dist", "src", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@solana/web3.js": ">=1.90.0"
+  },
+  "dependencies": {
+    "@solana/web3.js": ">=1.90.0",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "@magicblock-labs/ephemeral-rollups-sdk": "^0.15.5",
+    "typescript": "^5.4.0"
+  }
+}
