@@ -32,11 +32,20 @@ repo) · **cm-sdk** (wagering, separate). A game's mode picks the layer; they co
 
 See [SECURITY.md](SECURITY.md) for the trust model and invariants.
 
+## Reference integration — chess
+`examples/chess-arena.ts` shows how a game plugs in: a **move codec** (chess move ↔ arena
+action bytes, byte-compatible with the resolver's chess validator) + an **off-chain replay
+validator** (`replayChessActions`, chess.js) that derives the real result. Every arena game
+follows this pattern (define a codec + a validator); PLG's battles will mirror it.
+
 ## Build & test
 ```bash
 cd program
 anchor build                 # do NOT delete Cargo.lock — it pins solana-program 2.3.0
                              # / borsh 0.10.4 so ephemeral-rollups-sdk 0.8.8 compiles
-bash tests/run.sh            # localnet L1 suite
-npx vitest run tests/arena-er.test.ts   # devnet ER round-trip (needs a funded devnet wallet)
+bash tests/run.sh                          # localnet L1 suite (4/4)
+npx vitest run tests/arena-er.test.ts      # devnet ER round-trip (6/6)
+npx vitest run tests/arena-client.test.ts  # ArenaClient lifecycle (devnet)
+npx vitest run tests/arena-chess.test.ts   # a full legal chess game through arena (devnet)
+# devnet suites need a funded devnet wallet at ~/.config/solana/id.json
 ```
