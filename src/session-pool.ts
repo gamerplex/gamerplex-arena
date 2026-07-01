@@ -32,6 +32,7 @@ export class SessionPoolClient<MoveArgs = Record<string, number>> {
   constructor(
     private readonly resolverUrl: string,
     private readonly descriptor: GameDescriptor<MoveArgs>,
+    private readonly adminToken: string = process.env.ADMIN_HEALTH_TOKEN || "",
   ) {}
 
   /** Request a free pre-delegated ER game from the resolver pool. */
@@ -91,7 +92,7 @@ export class SessionPoolClient<MoveArgs = Record<string, number>> {
     try {
       const res = await fetch(`${this.resolverUrl}/game-pool/ai-move`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-admin-token": this.adminToken },
         body: JSON.stringify({ gamePda: this.gamePda.toBase58(), ...body }),
       });
       const data = await res.json();
@@ -107,7 +108,7 @@ export class SessionPoolClient<MoveArgs = Record<string, number>> {
     try {
       const res = await fetch(`${this.resolverUrl}/game-pool/finish`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-admin-token": this.adminToken },
         body: JSON.stringify({ gamePda: this.gamePda.toBase58(), playerWallet, result }),
       });
       const data = await res.json();
