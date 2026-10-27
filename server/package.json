@@ -5,9 +5,17 @@
   "type": "module",
   "description": "Gamerplex Arena Server: live arenas on Colyseus.",
   "license": "MIT",
-  "engines": { "node": ">=22" },
-  "bin": { "arena-server": "server.mjs" },
-  "scripts": { "start": "node server.mjs", "test": "node test.mjs" },
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "arena-server": "server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test.mjs",
+    "live": "node live-check.mjs"
+  },
   "dependencies": {
     "@colyseus/core": "0.18.18",
     "@colyseus/schema": "5.0.39",
