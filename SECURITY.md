@@ -40,3 +40,17 @@ access-control and liveness, not value transfer.
 
 ## Reporting
 This is pre-production. Raise issues internally.
+
+## Arena Server (`server/`)
+- **Holds no keys or secrets.** Settlement is `none`; an ER adapter would read its signer from `/xnode-config/env` at runtime, never from git.
+- **Server-authoritative:** clients send inputs; the server bounds them (world limits, speed cap, a mode allow-list) and syncs the state.
+- **Abuse limits:**
+  - 4 KB maximum frame (the sender is disconnected);
+  - 30 messages/s per player;
+  - an unknown message type disconnects the sender;
+  - district ids restricted to integers 0–999;
+  - at most `MAX_ARENAS` live arenas (default 200);
+  - 4 players per arena.
+- **Every arena hashes its accepted inputs** (SHA-256) and reports open/close to settlement, so a result can later be committed with its log hash and replay-checked.
+- **Not yet:** identity check on join (`onAuth`). Anyone can enter an arena; nothing in an arena moves value or grants credit.
+- **systemd sandbox** (`nix/module.nix`): dedicated user, no capabilities, `ProtectSystem=strict`, a syscall filter, `MemoryMax=384M`.

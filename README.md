@@ -38,6 +38,13 @@ action bytes, byte-compatible with the resolver's chess validator) + an **off-ch
 validator** (`replayChessActions`, chess.js) that derives the real result. Every arena game
 follows this pattern (define a codec + a validator); PLG's battles will mirror it.
 
+## Arena Server — live arenas
+`server/` runs live arenas on [Colyseus](https://colyseus.io) (MIT). Each game adds an arena type in `server/arenas/` (today: `omega.district`, up to 4 players per district). Every arena hashes its inputs and reports open/close to a settlement adapter (`server/settlement.mjs`): `none` today, and later an ER adapter that opens and finishes the match through this program.
+```bash
+cd server && npm ci && npm test       # Node >= 22
+nix build .#packages.x86_64-linux.default   # NixOS module: nixosModules.default
+```
+
 ## Build & test
 ```bash
 cd program
